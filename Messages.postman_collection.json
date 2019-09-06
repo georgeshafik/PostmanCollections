@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1acda406-7fec-49cf-97dd-59fcde48d88d",
+		"_postman_id": "e5465a3f-bfa4-44f8-9e77-993291df82f9",
 		"name": "Messages",
 		"description": "The MessageMedia Messages API provides a number of endpoints for building powerful two-way messaging applications. The Messages API provides access to three main resources:\n\n* Messages - Messages delivered from an application to a handset.\n\n* Delivery Reports - Real time reports on the delivery status of a message. As a message\n  is processed, it's status may change several times before it is finally delivered to a handset.\n\n* Replies - Messages sent from a handset to an application. These messages are typically a reply\n  to a previously sent message.\n\n![Message Flow](https://i.imgur.com/jJeHwf5.png)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -25,7 +25,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"messages\": [\n        {\n            \"callback_url\": \"https://my.callback.url.com\",\n            \"content\": \"My first message\",\n            \"destination_number\": \"+61491570156\",\n            \"delivery_report\": true,\n            \"format\": \"SMS\",\n            \"message_expiry_timestamp\": \"2016-11-03T11:49:02.807Z\",\n            \"metadata\": {\n                \"key1\": \"value1\",\n                \"key2\": \"value2\"\n            },\n            \"scheduled\": \"2016-11-03T11:49:02.807Z\",\n            \"source_number\": \"+61491570157\",\n            \"source_number_type\": \"INTERNATIONAL\"\n        },\n        {\n            \"callback_url\": \"https://my.callback.url.com\",\n            \"content\": \"My second message\",\n            \"destination_number\": \"+61491570158\",\n            \"delivery_report\": true,\n            \"format\": \"MMS\",\n            \"media\": [ \"https://images.pexels.com/photos/1018350/pexels-photo-1018350.jpeg?cs=srgb&dl=architecture-buildings-city-1018350.jpg\" ],\n            \"message_expiry_timestamp\": \"2016-11-03T11:49:02.807Z\",\n            \"metadata\": {\n                \"key1\": \"value1\",\n                \"key2\": \"value2\"\n            },\n            \"scheduled\": \"2016-11-03T11:49:02.807Z\",\n            \"source_number\": \"+61491570159\",\n            \"source_number_type\": \"INTERNATIONAL\"\n        }\n    ]\n}"
+							"raw": "{\n    \"messages\": [\n        {\n            \"callback_url\": \"https://my.callback.url.com\",\n            \"content\": \"My first message\",\n            \"destination_number\": \"+614<ENTER DESTINATION NO>\",\n            \"delivery_report\": true,\n            \"format\": \"SMS\",\n            \"message_expiry_timestamp\": \"2016-11-03T11:49:02.807Z\",\n            \"metadata\": {\n                \"key1\": \"value1\",\n                \"key2\": \"value2\"\n            },\n            \"scheduled\": \"2016-11-03T11:49:02.807Z\",\n            \"source_number\": \"+61491570157\",\n            \"source_number_type\": \"INTERNATIONAL\"\n        },\n        {\n            \"callback_url\": \"https://my.callback.url.com\",\n            \"content\": \"My second message\",\n            \"destination_number\": \"+614<ENTER DESTINATION NO>\",\n            \"delivery_report\": true,\n            \"format\": \"MMS\",\n            \"media\": [ \"https://images.pexels.com/photos/1018350/pexels-photo-1018350.jpeg?cs=srgb&dl=architecture-buildings-city-1018350.jpg\" ],\n            \"message_expiry_timestamp\": \"2016-11-03T11:49:02.807Z\",\n            \"metadata\": {\n                \"key1\": \"value1\",\n                \"key2\": \"value2\"\n            },\n            \"scheduled\": \"2016-11-03T11:49:02.807Z\",\n            \"source_number\": \"+61491570159\",\n            \"source_number_type\": \"INTERNATIONAL\"\n        }\n    ]\n}"
 						},
 						"url": {
 							"raw": "{{HOST}}/v1/messages",
@@ -38,6 +38,54 @@
 							]
 						},
 						"description": "Submit one or more (up to 100 per request) SMS, MMS or text to voice messages for delivery.\n\nThe most basic message has the following structure:\n\n```json\n{\n    \"messages\": [\n        {\n            \"content\": \"My first message!\",\n            \"destination_number\": \"+61491570156\"\n        }\n    ]\n}\n```\n\nMore advanced delivery features can be specified by setting the following properties in a message:\n\n- ```callback_url``` A URL can be included with each message to which Webhooks will be pushed to\n  via a HTTP POST request. Webhooks will be sent if and when the status of the message changes as\n  it is processed (if the delivery report property of the request is set to ```true```) and when replies\n  are received. Specifying a callback URL is optional.\n\n- ```content``` The content of the message. This can be a Unicode string, up to 5,000 characters long.\n  Message content is required.\n\n- ```delivery_report``` Delivery reports can be requested with each message. If delivery reports are requested, a webhook\n  will be submitted to the ```callback_url``` property specified for the message (or to the webhooks)\n  specified for the account every time the status of the message changes as it is processed. The\n  current status of the message can also be retrieved via the Delivery Reports endpoint of the\n  Messages API. Delivery reports are optional and by default will not be requested.\n\n- ```destination_number``` The destination number the message should be delivered to. This should be specified in E.164\n  international format. For information on E.164, please refer to http://en.wikipedia.org/wiki/E.164.\n  A destination number is required.\n\n- ```format``` The format specifies which format the message will be sent as, ```SMS``` (text message), ```MMS``` (multimedia message)\n  or ```TTS``` (text to speech). With ```TTS``` format, we will call the destination number and read out the\n  message using a computer generated voice. Specifying a format is optional, by default ```SMS``` will be used.\n\n- ```source_number``` A source number may be specified for the message, this will be the number that\n  the message appears from on the handset. By default this feature is _not_ available and will be ignored\n  in the request. Please contact <support@messagemedia.com> for more information. Specifying a source\n  number is optional and a by default a source number will be assigned to the message.\n\n- ```media``` The media is used to specify the url of the media file that you are trying to send. Supported file formats include png, jpeg and gif. ```format``` parameter must be set to ```MMS``` for this to work.\n\n- ```source_number_type``` If a source number is specified, the type of source number may also be\n  specified. This is recommended when using a source address type that is not an internationally\n  formatted number, available options are ```INTERNATIONAL```, ```ALPHANUMERIC``` or ```SHORTCODE```. Specifying a\n  source number type is only valid when the ```source_number``` parameter is specified and is optional.\n  If a source number is specified and no source number type is specified, the source number type will be\n  inferred from the source number, however this may be inaccurate.\n\n- ```scheduled``` A message can be scheduled for delivery in the future by setting the scheduled property.\n  The scheduled property expects a date time specified in ISO 8601 format. The scheduled time must be\n  provided in UTC and is optional. If no scheduled property is set, the message will be delivered immediately.\n\n- ```message_expiry_timestamp``` A message expiry timestamp can be provided to specify the latest time\n  at which the message should be delivered. If the message cannot be delivered before the specified\n  message expiry timestamp elapses, the message will be discarded. Specifying a message expiry \n  timestamp is optional.\n\n- ```metadata``` Metadata can be included with the message which will then be included with any delivery\n  reports or replies matched to the message. This can be used to create powerful two-way messaging\n  applications without having to store persistent data in the application. Up to 10 key / value metadata data\n  pairs can be specified in a message. Each key can be up to 100 characters long, and each value up to \n  256 characters long. Specifying metadata for a message is optional.\n\nThe response body of a successful POST request to the messages endpoint will include a ```messages```\nproperty which contains a list of all messages submitted. The list of messages submitted will\nreflect the list of messages included in the request, but each message will also contain two new\nproperties, ```message_id``` and ```status```. The returned message ID will be a 36 character UUID\nwhich can be used to check the status of the message via the Get Message Status endpoint. The status\nof the message which reflect the status of the message at submission time which will always be\n```queued```. See the Delivery Reports section of this documentation for more information on message\nstatues.\n\n*Note: when sending multiple messages in a request, all messages must be valid for the request to be successful.\nIf any messages in the request are invalid, no messages will be sent.*"
+					},
+					"response": []
+				},
+				{
+					"name": "Post messages - basic auth",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "[api_key]:[api_secret]",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"messages\": [\n        {\n      \"content\": \"Message one\",\n      \"destination_number\": \"+614[Destination number]\",\n      \"format\": \"SMS\"\n        },\n        {\n      \"content\": \"Message two\",\n      \"destination_number\": \"+614[Destination number]\",\n      \"format\": \"SMS\"\n        }        \n    ]\n}"
+						},
+						"url": {
+							"raw": "api.messagemedia.com/v1/messages",
+							"host": [
+								"api",
+								"messagemedia",
+								"com"
+							],
+							"path": [
+								"v1",
+								"messages"
+							]
+						}
 					},
 					"response": []
 				},
@@ -55,10 +103,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{HOST}}/v1/messages/:messageId",
 							"host": [
@@ -119,6 +163,28 @@
 					},
 					"response": []
 				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "d5ebee0a-c201-4700-a64a-6e5d6cd1f6d8",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "3e8da468-e41e-4cd2-8325-7e53cb9919ad",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
 			]
 		},
 		{
@@ -138,10 +204,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{HOST}}/v1/replies",
 							"host": [
@@ -208,10 +270,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{HOST}}/v1/delivery_reports",
 							"host": [
@@ -261,6 +319,57 @@
 				}
 			],
 			"description": "Delivery Reports may carry an additional charge. For pricing, please contact your Account Manager or Support Team (<support@messagemedia.com>)"
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "{{password}}",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "{{username}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "d096f59a-4e26-4113-bb3e-bd609a71a2fc",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "712ade83-0741-4807-94eb-2888e74c2eea",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "00c26922-6cb6-4a48-ae5e-a366aec8d7f5",
+			"key": "username",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"id": "c4675aee-2641-46e3-968a-d6a01b8ad577",
+			"key": "password",
+			"value": "",
+			"type": "string"
 		}
 	]
 }
